@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { MailService } from './mail/mail.service';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
+  constructor(private mailService: MailService) {}
+
+  getHello() {
     return 'Hello World!';
   }
 }

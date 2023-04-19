@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AccountsModule } from './accounts/accounts.module';
+import { AuthModule } from './auth/auth.module';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import { CuisinesModule } from './cuisines/cuisines.module';
 import { OrdersModule } from './orders/orders.module';
@@ -13,7 +13,7 @@ import { OptionDetailsModule } from './option_details/option_details.module';
 import { OrderDetailsModule } from './order_details/order_details.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Account } from './accounts/account.entity';
+import { Account } from './auth/account.entity';
 import { Cuisines } from './cuisines/cuisines.entity';
 import { Item } from './items/item.entity';
 import { OptionDetails } from './option_details/option-details.entity';
@@ -21,6 +21,9 @@ import { Order } from './orders/order.entity';
 import { Restaurant } from './restaurants/restaurant.entity';
 import { Section } from './sections/section.entity';
 import { OrderDetails } from './order_details/order-details.entity';
+import { APP_GUARD } from '@nestjs/core';
+import { AtGuard } from './common/guard';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -49,14 +52,14 @@ import { OrderDetails } from './order_details/order-details.entity';
             Restaurant,
             Section,
           ],
-          synchronize: false,
+          synchronize: true,
           ssl: {
             rejectUnauthorized: false, // This is necessary if you're using self-signed SSL certificates
           },
         };
       },
     }),
-    AccountsModule,
+    AuthModule,
     RestaurantsModule,
     CuisinesModule,
     OrdersModule,
@@ -65,8 +68,15 @@ import { OrderDetails } from './order_details/order-details.entity';
     OptionsModule,
     OptionDetailsModule,
     OrderDetailsModule,
+    MailModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AtGuard,
+    },
+  ],
 })
 export class AppModule {}

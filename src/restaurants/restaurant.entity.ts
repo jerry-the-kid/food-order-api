@@ -7,7 +7,7 @@ import {
   OneToOne,
   PrimaryColumn,
 } from 'typeorm';
-import { Account } from '../accounts/account.entity';
+import { Account } from '../auth/account.entity';
 import { Cuisines } from '../cuisines/cuisines.entity';
 import { Order } from '../orders/order.entity';
 import { Section } from '../sections/section.entity';
