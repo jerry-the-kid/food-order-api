@@ -49,7 +49,7 @@ import { OrderDetails } from './order_details/order-details.entity';
             Restaurant,
             Section,
           ],
-          synchronize: true,
+          synchronize: false,
           ssl: {
             rejectUnauthorized: false, // This is necessary if you're using self-signed SSL certificates
           },
