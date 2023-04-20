@@ -24,12 +24,13 @@ import { OrderDetails } from './order_details/order-details.entity';
 import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './common/guard';
 import { MailModule } from './mail/mail.module';
+import { RolesGuard } from './common/guard/roles.guard';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: 'config.env',
+      envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
@@ -52,7 +53,7 @@ import { MailModule } from './mail/mail.module';
             Restaurant,
             Section,
           ],
-          synchronize: true,
+          synchronize: configService.get('DB.SYNC') === 'true',
           ssl: {
             rejectUnauthorized: false, // This is necessary if you're using self-signed SSL certificates
           },
@@ -76,6 +77,10 @@ import { MailModule } from './mail/mail.module';
     {
       provide: APP_GUARD,
       useClass: AtGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
   ],
 })

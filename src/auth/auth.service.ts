@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './account.entity';
 import { Repository } from 'typeorm';
-import { AuthDto } from './dto';
+import { SignInDto } from './dto';
 import * as argon from 'argon2';
 import { Tokens } from './types';
 import { JwtService } from '@nestjs/jwt';
@@ -20,47 +20,53 @@ export class AuthService {
   async getOtp(email: string) {
     const user = await this.repo.findOneBy({ email });
     const otp = this.generateOTP(6);
+    const otpHashed = await this.hashData(otp);
     const otpExp = new Date(Date.now() + 3 * 60 * 1000);
     let userUpdated: Account;
     if (!user) {
-      userUpdated = await this.repo.save({ email, otp, otpExpires: otpExp });
+      userUpdated = await this.repo.save({
+        email,
+        otp: otpHashed,
+        otpExpires: otpExp,
+      });
     } else {
-      userUpdated = await this.repo.save({ ...user, otp, otpExpires: otpExp });
+      userUpdated = await this.repo.save({
+        ...user,
+        otp: otpHashed,
+        otpExpires: otpExp,
+      });
     }
-    await this.mailService.sendOtpConfirmation(userUpdated);
+    await this.mailService.sendOtpConfirmation({ ...userUpdated, otp });
 
     return {
       email: userUpdated.email,
-      otp: userUpdated.otp,
+      otp,
     };
   }
 
-  async signUpLocal(dto: AuthDto) {
-    const hash = await this.hashData(dto.password);
+  async singinLocal(dto: SignInDto) {
+    const user = await this.repo.findOneBy({ email: dto.email });
 
-    const newUser = await this.repo.save({
-      email: dto.email,
-      password: hash,
-    });
+    if (!user) throw new ForbiddenException('Access Denied! User not found');
 
-    const tokens = await this.getTokens(newUser.id, newUser.email);
-    await this.updateRtHash(newUser.id, tokens.refresh_token);
-    return tokens;
+    const otpMatches = await argon.verify(user.otp, dto.otp);
+    if (!otpMatches)
+      throw new ForbiddenException('Access Denied! Otp not matches');
+
+    if (user.otpExpires < new Date()) {
+      await this.repo.save({ ...user, otp: null, otpExpires: null });
+      throw new ForbiddenException('Otp is expired. Singin again to continue');
+    }
+
+    await this.repo.save({ ...user, otp: null, otpExpires: null });
+    const tokens = await this.getTokens(user.id, user.email, user.role);
+    await this.updateRtHash(user.id, tokens.refresh_token);
+    return {
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+      user,
+    };
   }
-
-  // async singinLocal(dto: AuthDto): Promise<Tokens> {
-  //   const user = await this.repo.findOneBy({ email: dto.email });
-  //   console.log(user);
-  //
-  //   if (!user) throw new ForbiddenException('Access Denied');
-  //
-  //   const passwordMatches = await argon.verify(user.password, dto.password);
-  //   if (!passwordMatches) throw new ForbiddenException('Access Denied');
-  //
-  //   const tokens = await this.getTokens(user.id, user.email);
-  //   await this.updateRtHash(user.id, tokens.refresh_token);
-  //   return tokens;
-  // }
 
   async logout(userId: number) {
     await this.repo
@@ -75,12 +81,17 @@ export class AuthService {
     return await argon.hash(data);
   }
 
-  async getTokens(userId: number, email: string): Promise<Tokens> {
+  async getTokens(
+    userId: number,
+    email: string,
+    role: string,
+  ): Promise<Tokens> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
           id: userId,
           email,
+          role,
         },
         { secret: 'at-secret', expiresIn: 60 * 15 },
       ),
@@ -113,7 +124,7 @@ export class AuthService {
 
     if (!rtMatches) throw new ForbiddenException('Access Denied');
 
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens(user.id, user.email, user.role);
     await this.updateRtHash(user.id, tokens.refresh_token);
     return tokens;
   }

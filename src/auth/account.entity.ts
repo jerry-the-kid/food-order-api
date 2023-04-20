@@ -22,7 +22,7 @@ export class Account {
   googleId: string;
   @Column({ nullable: true })
   facebookId: string;
-  @Column({ nullable: true })
+  @Column({ default: 'customer' })
   role: string;
   @Column({ nullable: true })
   lat: number;
