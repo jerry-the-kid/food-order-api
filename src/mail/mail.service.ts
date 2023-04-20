@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Account } from '../auth/account.entity';
+import { getOtpTemplate } from './templates/otp';
 
 @Injectable()
 export class MailService {
@@ -10,7 +11,7 @@ export class MailService {
     await this.mailerService.sendMail({
       to: user.email,
       subject: 'Welcome to FoodOrder App! Confirm your Email',
-      template: './otp',
+      html: getOtpTemplate(user.otp),
       context: {
         code: user.otp,
       },
