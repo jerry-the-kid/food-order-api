@@ -11,7 +11,7 @@ import {
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto';
 import { Request, Response } from 'express';
-import { AtGuard, RtGuard } from '../common/guard';
+import { RtGuard } from '../common/guard';
 import { GetCurrentUser, Public } from '../common/decorator';
 import { CreateOtpDto } from './dto/create-otp.dto';
 
@@ -48,12 +48,11 @@ export class AccountsController {
   ) {
     const data = await this.authService.singinLocal(body);
     createSendCookie(response, data);
-    return { email: data.user.email, role: data.user.role };
+    return { id: data.user.id, email: data.user.email, role: data.user.role };
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('logout')
-  @UseGuards(AtGuard)
   async logOut(@GetCurrentUser('id') userId: number) {
     await this.authService.logout(userId);
   }

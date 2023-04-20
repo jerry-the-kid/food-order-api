@@ -49,6 +49,8 @@ export class AuthService {
 
     if (!user) throw new ForbiddenException('Access Denied! User not found');
 
+    if (!user.otp) throw new ForbiddenException('Otp not found');
+
     const otpMatches = await argon.verify(user.otp, dto.otp);
     if (!otpMatches)
       throw new ForbiddenException('Access Denied! Otp not matches');
@@ -93,14 +95,17 @@ export class AuthService {
           email,
           role,
         },
-        { secret: 'at-secret', expiresIn: 60 * 15 },
+        { secret: '19GHEbSta4p5pL07U46EzaIZXHouLC', expiresIn: 60 * 15 },
       ),
       this.jwtService.signAsync(
         {
           id: userId,
           email,
         },
-        { secret: 'rt-secret', expiresIn: 60 * 60 * 24 * 7 },
+        {
+          secret: '2BnYpIgYb9woMAcUdeKVlggYTSDDj1',
+          expiresIn: 60 * 60 * 24 * 7,
+        },
       ),
     ]);
 
