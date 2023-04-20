@@ -2,7 +2,6 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-jwt';
 import { Injectable } from '@nestjs/common';
 import { JwtPayload } from '../types';
-import * as process from 'process';
 
 @Injectable()
 export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -11,7 +10,7 @@ export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
       jwtFromRequest: (req) => {
         return req.cookies.accessToken;
       },
-      secretOrKey: process.env['AT.SECRET'],
+      secretOrKey: '19GHEbSta4p5pL07U46EzaIZXHouLC',
     });
   }
 

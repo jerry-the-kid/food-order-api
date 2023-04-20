@@ -3,7 +3,6 @@ import { Strategy } from 'passport-jwt';
 import { Request } from 'express';
 import { Injectable } from '@nestjs/common';
 import { JwtPayload } from '../types';
-import process from 'process';
 
 @Injectable()
 export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
@@ -12,7 +11,7 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
       jwtFromRequest: (req) => {
         return req.cookies.refreshToken;
       },
-      secretOrKey: process.env['RT.SECRET'],
+      secretOrKey: '2BnYpIgYb9woMAcUdeKVlggYTSDDj1',
       passReqToCallback: true,
     });
   }
