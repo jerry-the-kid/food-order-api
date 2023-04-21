@@ -15,7 +15,7 @@ import { RtGuard } from '../common/guard';
 import { GetCurrentUser, Public } from '../common/decorator';
 import { CreateOtpDto } from './dto/create-otp.dto';
 
-function createSendCookie(response: Response, data) {
+function createSendCookie(response: Response, data, deleteCookies = false) {
   const cookieOptions = {
     expires: new Date(
       Date.now() +
@@ -24,8 +24,16 @@ function createSendCookie(response: Response, data) {
     httpOnly: true,
   };
   if (process.env.NODE_ENV === 'production') cookieOptions['secure'] = true;
-  response.cookie('accessToken', data.access_token, cookieOptions);
-  response.cookie('refreshToken', data.refresh_token, cookieOptions);
+  const accessToken = data?.access_token ?? null;
+  const refreshToken = data?.refresh_token ?? null;
+
+  response.cookie('accessToken', accessToken, cookieOptions);
+  response.cookie('refreshToken', refreshToken, cookieOptions);
+
+  if (deleteCookies) {
+    response.clearCookie('accessToken');
+    response.clearCookie('refreshToken');
+  }
 }
 
 @Controller('auth')
@@ -53,7 +61,11 @@ export class AccountsController {
 
   @HttpCode(HttpStatus.OK)
   @Post('logout')
-  async logOut(@GetCurrentUser('id') userId: number) {
+  async logOut(
+    @Res({ passthrough: true }) response: Response,
+    @GetCurrentUser('id') userId: number,
+  ) {
+    createSendCookie(response, null, true);
     await this.authService.logout(userId);
   }
 
