@@ -57,7 +57,7 @@ export class RestaurantsService {
 
   async findOne(id: number) {
     const restaurant = await this.repo.findOne({
-      relations: { account: true, cuisines: true, sections: true },
+      relations: { account: true, cuisines: true, sections: { items: true } },
       where: { id: id },
     });
 
@@ -71,7 +71,7 @@ export class RestaurantsService {
   async addCuisine(restaurantId: number, { id }: AddCuisineDto) {
     const cuisine = await this.cuisinesService.findOne(id);
     const restaurant = await this.repo.findOne({
-      relations: { account: true, cuisines: true },
+      relations: { cuisines: true },
       where: { id: restaurantId },
     });
 
@@ -89,7 +89,7 @@ export class RestaurantsService {
 
   async addSection(restaurantId: number, dto: AddSectionDto) {
     const restaurant = await this.repo.findOne({
-      relations: { account: true, cuisines: true, sections: true },
+      relations: { sections: true },
       where: { id: restaurantId },
     });
 

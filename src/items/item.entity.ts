@@ -4,21 +4,23 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Section } from '../sections/section.entity';
 import { Option } from '../options/option.entity';
 
 @Entity()
 export class Item {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
   @Column()
   name: string;
   @Column()
   price: number;
-  @Column()
+  @Column({ nullable: true })
   description: string;
+  @Column()
+  imgSrc: string;
   @Column()
   type: string;
 

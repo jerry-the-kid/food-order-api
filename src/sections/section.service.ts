@@ -13,4 +13,8 @@ export class SectionService {
     const section = this.repo.create({ name });
     return this.repo.save(section);
   }
+
+  async findOne(id: number) {
+    return this.repo.findOneBy({ id });
+  }
 }
