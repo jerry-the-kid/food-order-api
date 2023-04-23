@@ -15,6 +15,10 @@ export class Account {
   @Column({ unique: true })
   email: string;
   @Column({ nullable: true })
+  phone: string;
+  @Column({ nullable: true })
+  name: string;
+  @Column({ nullable: true })
   otp: string;
   @Column({ nullable: true })
   otpExpires: Date;
@@ -24,9 +28,9 @@ export class Account {
   facebookId: string;
   @Column({ default: 'customer' })
   role: string;
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'float' })
   lat: number;
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'float' })
   lng: number;
   @Column({ nullable: true })
   createdAt: Date;

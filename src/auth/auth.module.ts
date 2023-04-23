@@ -6,6 +6,8 @@ import { Account } from './account.entity';
 import { AtStrategy, RtStrategy } from './strategies';
 import { JwtModule } from '@nestjs/jwt';
 import { MailModule } from '../mail/mail.module';
+import { AccountService } from './account.service';
+import { GeocodingService } from '../common/service/geocoding.service';
 
 @Module({
   imports: [
@@ -14,6 +16,13 @@ import { MailModule } from '../mail/mail.module';
     JwtModule.register({}),
   ],
   controllers: [AccountsController],
-  providers: [AuthService, AtStrategy, RtStrategy],
+  providers: [
+    AuthService,
+    AtStrategy,
+    RtStrategy,
+    AccountService,
+    GeocodingService,
+  ],
+  exports: [AccountService],
 })
 export class AuthModule {}

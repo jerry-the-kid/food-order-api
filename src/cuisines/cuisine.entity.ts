@@ -1,9 +1,15 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Restaurant } from '../restaurants/restaurant.entity';
 
 @Entity()
-export class Cuisines {
-  @PrimaryColumn()
+export class Cuisine {
+  @PrimaryGeneratedColumn()
   id: number;
   @Column()
   name: string;

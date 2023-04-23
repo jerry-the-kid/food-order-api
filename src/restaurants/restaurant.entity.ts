@@ -5,31 +5,30 @@ import {
   ManyToMany,
   OneToMany,
   OneToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Account } from '../auth/account.entity';
-import { Cuisines } from '../cuisines/cuisines.entity';
+
 import { Order } from '../orders/order.entity';
 import { Section } from '../sections/section.entity';
+import { Cuisine } from '../cuisines/cuisine.entity';
 
 @Entity()
 export class Restaurant {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
   @Column()
   name: string;
   @Column()
   address: string;
   @Column()
-  phone: string;
-  @Column()
   startWorkingTime: string;
+  @Column({ nullable: true })
+  imgUrl: string;
   @Column()
   endWorkingTime: string;
   @Column()
-  lat: number;
-  @Column()
-  lng: number;
+  slug: string;
 
   @OneToOne(() => Account, (account) => account.restaurant, {
     onDelete: 'CASCADE',
@@ -37,8 +36,8 @@ export class Restaurant {
   @JoinColumn()
   account: Account;
 
-  @ManyToMany(() => Cuisines, (cuisines) => cuisines.restaurants)
-  cuisines: Cuisines[];
+  @ManyToMany(() => Cuisine, (cuisines) => cuisines.restaurants)
+  cuisines: Cuisine[];
 
   @OneToMany(() => Restaurant, (restaurant) => restaurant.orders)
   orders: Order[];

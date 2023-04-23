@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import { CuisinesModule } from './cuisines/cuisines.module';
+import { Cuisine } from './cuisines/cuisine.entity';
 import { OrdersModule } from './orders/orders.module';
 import { SectionsModule } from './sections/sections.module';
 import { ItemsModule } from './items/items.module';
@@ -14,7 +15,6 @@ import { OrderDetailsModule } from './order_details/order_details.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Account } from './auth/account.entity';
-import { Cuisines } from './cuisines/cuisines.entity';
 import { Item } from './items/item.entity';
 import { OptionDetails } from './option_details/option-details.entity';
 import { Order } from './orders/order.entity';
@@ -44,7 +44,7 @@ import { RolesGuard } from './common/guard/roles.guard';
           database: configService.get('DB.NAME'),
           entities: [
             Account,
-            Cuisines,
+            Cuisine,
             Item,
             Option,
             OptionDetails,

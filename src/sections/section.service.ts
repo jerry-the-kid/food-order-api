@@ -1,0 +1,16 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Section } from './section.entity';
+import { Repository } from 'typeorm';
+
+@Injectable()
+export class SectionService {
+  constructor(
+    @InjectRepository(Section) private readonly repo: Repository<Section>,
+  ) {}
+
+  async create(name: string) {
+    const section = this.repo.create({ name });
+    return this.repo.save(section);
+  }
+}
