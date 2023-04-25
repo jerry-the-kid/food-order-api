@@ -1,10 +1,13 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurant } from './restaurant.entity';
 import { Repository } from 'typeorm';
 import { AccountService } from '../auth/account.service';
 import { AddCuisineDto, AddSectionDto, CreateRestaurantDto } from './dto';
-import { NotFoundError } from 'rxjs';
 import * as slug from 'slug';
 import { CuisinesService } from '../cuisines/cuisines.service';
 import { SectionService } from '../sections/section.service';
@@ -62,7 +65,7 @@ export class RestaurantsService {
     });
 
     if (!restaurant) {
-      throw new NotFoundError('restaurant not found !!');
+      throw new NotFoundException('restaurant not found !!');
     }
 
     return restaurant;
@@ -74,6 +77,8 @@ export class RestaurantsService {
       relations: { cuisines: true },
       where: { id: restaurantId },
     });
+
+    if (!restaurant) throw new NotFoundException('restaurant not found !!');
 
     const findCuisine = restaurant.cuisines.find(
       (cuisine) => cuisine.id === id,
@@ -92,6 +97,8 @@ export class RestaurantsService {
       relations: { sections: true },
       where: { id: restaurantId },
     });
+
+    if (!restaurant) throw new NotFoundException('restaurant not found !!');
 
     const section = await this.sectionService.create(dto.name);
     restaurant.sections.push(section);

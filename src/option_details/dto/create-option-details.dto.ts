@@ -1,26 +1,18 @@
 import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
 
-export class CreateItemDto {
+export class CreateOptionDetailsDto {
   @IsString()
   @IsNotEmpty()
   name: string;
 
   @IsNumber()
   @IsNotEmpty()
-  @Min(1000)
-  actualPrice: number;
-
+  @Min(0)
   price: number;
 
   description: string;
 
-  @IsString()
-  @IsNotEmpty()
-  type: string;
-
   @IsNumber()
   @IsNotEmpty()
-  sectionId: number;
-
-  imgSrc: string;
+  optionId: number;
 }

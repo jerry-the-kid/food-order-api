@@ -4,14 +4,14 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Order } from '../orders/order.entity';
 import { OptionDetails } from '../option_details/option-details.entity';
 
 @Entity()
 export class OrderDetails {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
   @Column()
   quantity: number;

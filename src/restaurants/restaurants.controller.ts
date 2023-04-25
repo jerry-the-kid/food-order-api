@@ -5,12 +5,12 @@ import {
   AddCuisineDto,
   AddSectionDto,
   CreateRestaurantDto,
+  CuisinesDto,
   RestaurantDto,
+  SectionsDto,
 } from './dto';
 import { RestaurantsService } from './restaurants.service';
 import { Serialize } from '../common/interceptor';
-import { CuisinesDto } from './dto/cuisines.dto';
-import { SectionsDto } from './dto/sections.dto';
 
 @Controller('restaurants')
 export class RestaurantsController {

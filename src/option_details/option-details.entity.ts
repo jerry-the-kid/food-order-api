@@ -1,16 +1,22 @@
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Option } from '../options/option.entity';
 import { OrderDetails } from '../order_details/order-details.entity';
 
 @Entity()
 export class OptionDetails {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
   @Column()
   name: string;
-  @Column()
+  @Column({ nullable: true })
   price: number;
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
   @ManyToOne(() => Option, (option) => option.optionDetails)

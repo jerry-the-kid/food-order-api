@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Column,
   Entity,
   JoinColumn,
@@ -16,13 +17,17 @@ export class Item {
   @Column()
   name: string;
   @Column()
+  actualPrice: number;
+  @Column()
   price: number;
   @Column({ nullable: true })
   description: string;
-  @Column()
+  @Column({ nullable: true })
   imgSrc: string;
   @Column()
   type: string;
+  @Column({ default: false })
+  disable: boolean;
 
   @ManyToOne(() => Section, (section) => section.items)
   @JoinColumn()
@@ -30,4 +35,11 @@ export class Item {
 
   @OneToMany(() => Option, (option) => option.item)
   options: Option[];
+
+  @BeforeInsert()
+  setPrice() {
+    if (!this.price || this.price > this.actualPrice) {
+      this.price = this.actualPrice;
+    }
+  }
 }
