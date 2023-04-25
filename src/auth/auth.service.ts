@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './account.entity';
 import { Repository } from 'typeorm';
@@ -47,17 +52,17 @@ export class AuthService {
   async singinLocal(dto: SignInDto) {
     const user = await this.repo.findOneBy({ email: dto.email });
 
-    if (!user) throw new ForbiddenException('Access Denied! User not found');
+    if (!user) throw new BadRequestException('Access Denied! User not found');
 
-    if (!user.otp) throw new ForbiddenException('Otp not found');
+    if (!user.otp) throw new NotFoundException('otp not found');
 
     const otpMatches = await argon.verify(user.otp, dto.otp);
     if (!otpMatches)
-      throw new ForbiddenException('Access Denied! Otp not matches');
+      throw new BadRequestException('access Denied! Otp not matches');
 
     if (user.otpExpires < new Date()) {
       await this.repo.save({ ...user, otp: null, otpExpires: null });
-      throw new ForbiddenException('Otp is expired. Singin again to continue');
+      throw new BadRequestException('otp is expired. Singin again to continue');
     }
 
     await this.repo.save({ ...user, otp: null, otpExpires: null });
