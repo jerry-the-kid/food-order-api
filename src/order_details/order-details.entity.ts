@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Order } from '../orders/order.entity';
 import { OptionDetails } from '../option_details/option-details.entity';
+import { Item } from '../items/item.entity';
 
 @Entity()
 export class OrderDetails {
@@ -18,8 +19,13 @@ export class OrderDetails {
   @Column()
   message: string;
 
-  @ManyToOne(() => Order, (order) => order.orderDetails)
+  @ManyToOne(() => Order, (order) => order.orderDetails, {
+    onDelete: 'CASCADE',
+  })
   order: Order;
+
+  @ManyToOne(() => Item, (item) => item.orderDetails)
+  item: Item;
 
   @ManyToMany(
     () => OptionDetails,

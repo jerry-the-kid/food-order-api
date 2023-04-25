@@ -3,6 +3,7 @@ import { Public } from '../common/decorator';
 import { GeocodingService } from '../common/service/geocoding.service';
 import {
   AddCuisineDto,
+  AddOptionDto,
   AddSectionDto,
   CreateRestaurantDto,
   CuisinesDto,
@@ -33,17 +34,23 @@ export class RestaurantsController {
     return this.restaurantService.findOne(parseInt(id));
   }
 
-  @Post('/:id/cuisine')
+  @Post('/:id/cuisines')
   @Public()
   @Serialize(CuisinesDto)
   addCuisine(@Param('id') id: string, @Body() dto: AddCuisineDto) {
     return this.restaurantService.addCuisine(parseInt(id), dto);
   }
 
-  @Post('/:id/section')
+  @Post('/:id/sections')
   @Public()
   @Serialize(SectionsDto)
   addSection(@Param('id') id: string, @Body() dto: AddSectionDto) {
     return this.restaurantService.addSection(parseInt(id), dto);
+  }
+
+  @Post('/:id/options')
+  @Public()
+  addOption(@Param('id') id: string, @Body() dto: AddOptionDto) {
+    return this.restaurantService.addOption(parseInt(id), dto);
   }
 }

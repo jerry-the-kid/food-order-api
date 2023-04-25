@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Item } from './item.entity';
 import { Repository } from 'typeorm';
 import { SectionService } from '../sections/section.service';
-import { AddOptionDto } from './dto/add-option.dto';
+
 import { OptionsService } from '../options/options.service';
 
 @Injectable()
@@ -29,19 +29,20 @@ export class ItemsService {
     return this.repo.save(item);
   }
 
-  async addOption(id: number, dto: AddOptionDto) {
+  async addOption(id: number, optionId: number) {
     const item = await this.repo.findOne({
       relations: { options: true },
       where: { id },
     });
+    const option = await this.optionsService.findOne(optionId);
+
     if (!item) {
       throw new NotFoundException('Item not found');
     }
-    const option = await this.optionsService.create(
-      dto.name,
-      dto.limit,
-      dto.optional,
-    );
+
+    if (!option) {
+      throw new NotFoundException('Option not found');
+    }
 
     item.options.push(option);
     return this.repo.save(item);

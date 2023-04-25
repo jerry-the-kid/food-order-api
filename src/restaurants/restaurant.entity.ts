@@ -12,6 +12,7 @@ import { Account } from '../auth/account.entity';
 import { Order } from '../orders/order.entity';
 import { Section } from '../sections/section.entity';
 import { Cuisine } from '../cuisines/cuisine.entity';
+import { Option } from '../options/option.entity';
 
 @Entity()
 export class Restaurant {
@@ -41,6 +42,11 @@ export class Restaurant {
 
   @OneToMany(() => Restaurant, (restaurant) => restaurant.orders)
   orders: Order[];
+
+  @OneToMany(() => Option, (option) => option.restaurant, {
+    onDelete: 'CASCADE',
+  })
+  options: Option[];
 
   @OneToMany(() => Section, (section) => section.restaurant, {
     onDelete: 'CASCADE',

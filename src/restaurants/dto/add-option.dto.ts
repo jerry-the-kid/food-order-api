@@ -10,4 +10,10 @@ export class AddOptionDto {
   limit: number;
 
   optional: boolean;
+
+  optionsDetailsList: {
+    name: string;
+    price: number;
+    description: string;
+  }[];
 }

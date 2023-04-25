@@ -1,8 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { Public } from '../common/decorator';
 import { CreateItemDto } from './dto';
-import { AddOptionDto } from './dto/add-option.dto';
 
 @Controller('items')
 export class ItemsController {
@@ -14,10 +13,10 @@ export class ItemsController {
     return this.itemsService.create(dto);
   }
 
-  @Post('/:id/option')
+  @Patch('/:id/options/:optionId')
   @Public()
-  addOption(@Param('id') id: string, @Body() dto: AddOptionDto) {
-    return this.itemsService.addOption(parseInt(id), dto);
+  addOption(@Param('id') id: string, @Param('optionId') optionId: string) {
+    return this.itemsService.addOption(parseInt(id), parseInt(optionId));
   }
 
   @Get('/:id')

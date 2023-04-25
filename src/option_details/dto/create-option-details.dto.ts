@@ -11,8 +11,8 @@ export class CreateOptionDetailsDto {
   price: number;
 
   description: string;
-
-  @IsNumber()
-  @IsNotEmpty()
-  optionId: number;
+  //
+  // @IsNumber()
+  // @IsNotEmpty()
+  // optionId: number;
 }
