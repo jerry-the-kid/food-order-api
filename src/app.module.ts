@@ -36,7 +36,6 @@ import * as process from 'process';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        console.log(process.env.JWT_COOKIE_EXPIRES_IN);
         return {
           type: 'postgres',
           host: configService.get('DB_HOST'),
