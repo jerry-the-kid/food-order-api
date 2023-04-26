@@ -35,6 +35,7 @@ import { RolesGuard } from './common/guard/roles.guard';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
+        console.log(configService.get('DB.USERNAME'));
         return {
           type: 'postgres',
           host: configService.get('DB.HOST'),
