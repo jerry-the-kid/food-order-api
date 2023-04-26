@@ -39,11 +39,11 @@ import * as process from 'process';
         console.log(process.env.JWT_COOKIE_EXPIRES_IN);
         return {
           type: 'postgres',
-          host: configService.get('DB.HOST'),
-          port: parseInt(configService.get('DB.PORT')),
-          username: configService.get('DB.USERNAME'),
-          password: configService.get('DB.PASSWORD'),
-          database: configService.get('DB.NAME'),
+          host: configService.get('DB_HOST'),
+          port: parseInt(configService.get('DB_PORT')),
+          username: configService.get('DB_USERNAME'),
+          password: configService.get('DB_PASSWORD'),
+          database: configService.get('DB_NAME'),
           entities: [
             Account,
             Cuisine,
