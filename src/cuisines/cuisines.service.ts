@@ -24,4 +24,8 @@ export class CuisinesService {
   findOne(id: number) {
     return this.repo.findOneBy({ id });
   }
+
+  findOneBySlug(slug: string) {
+    return this.repo.findOneBy({ slug });
+  }
 }

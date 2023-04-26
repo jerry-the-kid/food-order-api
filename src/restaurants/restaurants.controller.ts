@@ -34,6 +34,12 @@ export class RestaurantsController {
     return this.restaurantService.findOne(parseInt(id));
   }
 
+  @Get('/slug/:slug')
+  @Public()
+  getRestaurantsBySlug(@Param('slug') slug: string) {
+    return this.restaurantService.findAllBySlug(slug);
+  }
+
   @Post('/:id/cuisines')
   @Public()
   @Serialize(CuisinesDto)

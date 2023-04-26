@@ -80,6 +80,15 @@ export class RestaurantsService {
     return restaurant;
   }
 
+  async findAllBySlug(slug: string) {
+    const cuisines = await this.cuisinesService.findOneBySlug(slug);
+    if (!cuisines) throw new NotFoundException();
+    return this.repo.find({
+      relations: { cuisines: true },
+      where: { cuisines: { id: cuisines.id } },
+    });
+  }
+
   async addCuisine(restaurantId: number, { id }: AddCuisineDto) {
     const cuisine = await this.cuisinesService.findOne(id);
     const restaurant = await this.repo.findOne({
