@@ -6,14 +6,18 @@ import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.use(cookieParser());
   app.enableCors({
-    origin: '*',
+    origin: [
+      'https://o413082.ingest.sentry.io',
+      'http://localhost:3000',
+      'http://localhost:4200',
+    ],
     methods: '*',
     allowedHeaders: '*',
     credentials: true,
   });
 
-  app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000, '0.0.0.0');
 }
