@@ -8,11 +8,7 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.enableCors({
-    origin: [
-      'https://o413082.ingest.sentry.io',
-      'http://localhost:3000',
-      'http://localhost:4200',
-    ],
+    origin: '*',
     methods: '*',
     allowedHeaders: '*',
     credentials: true,
