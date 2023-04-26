@@ -16,9 +16,14 @@ export class CuisinesService {
     const cuisine = this.repo.create({
       name: dto.name,
       slug: slug(dto.name + ' delivery'),
+      imgSrc: dto.imgSrc,
     });
 
     return this.repo.save(cuisine);
+  }
+
+  findAll() {
+    return this.repo.find();
   }
 
   findOne(id: number) {

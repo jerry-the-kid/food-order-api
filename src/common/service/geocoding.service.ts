@@ -53,7 +53,6 @@ export class GeocodingService {
     const durationInMinutes = data.routes[0].duration / 60;
     const distanceInKilometers = data.routes[0].distance / 1000;
 
-    console.log(`Duration: ${durationInMinutes} minutes`);
-    console.log(`Distance: ${distanceInKilometers} kilometers`);
+    return { durationInMinutes, distanceInKilometers };
   }
 }

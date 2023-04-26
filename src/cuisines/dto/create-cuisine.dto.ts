@@ -4,4 +4,6 @@ export class CreateCuisineDto {
   @IsNotEmpty()
   @IsString()
   name: string;
+
+  imgSrc: string;
 }

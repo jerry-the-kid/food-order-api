@@ -10,20 +10,22 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto';
-import { Request, Response } from 'express';
+import { CookieOptions, Request, Response } from 'express';
 import { RtGuard } from '../common/guard';
 import { GetCurrentUser, Public } from '../common/decorator';
 import { CreateOtpDto } from './dto/create-otp.dto';
 
 function createSendCookie(response: Response, data, deleteCookies = false) {
-  const cookieOptions = {
+  const cookieOptions: CookieOptions = {
     expires: new Date(
       Date.now() +
         parseInt(process.env.JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000,
     ),
     httpOnly: true,
+    sameSite: 'none',
+    secure: true,
+    // secure: process.env.NODE_ENV === 'production',
   };
-  if (process.env.NODE_ENV === 'production') cookieOptions['secure'] = true;
   const accessToken = data?.access_token ?? null;
   const refreshToken = data?.refresh_token ?? null;
 

@@ -15,6 +15,8 @@ export class Cuisine {
   name: string;
   @Column()
   slug: string;
+  @Column({ nullable: true })
+  imgSrc: string;
 
   @ManyToMany(() => Restaurant, (restaurant) => restaurant.cuisines)
   @JoinTable()

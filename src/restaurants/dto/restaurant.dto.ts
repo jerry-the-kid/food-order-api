@@ -19,6 +19,11 @@ export class RestaurantDto {
   slug: string;
 
   @Expose()
+  durationInMinutes: string;
+  @Expose()
+  distanceInKilometers: string;
+
+  @Expose()
   @Transform(({ obj }) => obj.account.id)
   account_id: number;
 

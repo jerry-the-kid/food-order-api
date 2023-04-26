@@ -18,6 +18,7 @@ import { CuisinesService } from '../cuisines/cuisines.service';
 import { SectionService } from '../sections/section.service';
 import { OptionsService } from '../options/options.service';
 import { OptionDetailsService } from '../option_details/option-details.service';
+import { GeocodingService } from '../common/service/geocoding.service';
 
 @Injectable()
 export class RestaurantsService {
@@ -28,6 +29,7 @@ export class RestaurantsService {
     private sectionService: SectionService,
     private optionService: OptionsService,
     private optionsDetailService: OptionDetailsService,
+    private geocodingService: GeocodingService,
   ) {}
 
   async create(dto: CreateRestaurantDto) {
@@ -82,11 +84,14 @@ export class RestaurantsService {
 
   async findAllBySlug(slug: string) {
     const cuisines = await this.cuisinesService.findOneBySlug(slug);
+
     if (!cuisines) throw new NotFoundException();
-    return this.repo.find({
-      relations: { cuisines: true },
+    const restaurants = await this.repo.find({
+      relations: { cuisines: true, account: true },
       where: { cuisines: { id: cuisines.id } },
     });
+
+    return this.filterRestaurants(restaurants);
   }
 
   async addCuisine(restaurantId: number, { id }: AddCuisineDto) {
@@ -146,5 +151,26 @@ export class RestaurantsService {
     this.repo.save(restaurant);
 
     return { option: { ...option, optionDetails: optionDetailsList } };
+  }
+
+  private async filterRestaurants(restaurants: Restaurant[]) {
+    const calculatedRestaurants = await Promise.all(
+      restaurants.map(async (restaurant) => {
+        const { lat, lng } = restaurant.account;
+        const { durationInMinutes, distanceInKilometers } =
+          await this.geocodingService.getTravelTime(
+            10.856332803462626,
+            106.63111814660117,
+            lat,
+            lng,
+          );
+
+        return { ...restaurant, durationInMinutes, distanceInKilometers };
+      }),
+    );
+
+    return calculatedRestaurants.filter(
+      (restaurant) => restaurant.distanceInKilometers < 10,
+    );
   }
 }

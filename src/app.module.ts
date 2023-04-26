@@ -55,7 +55,7 @@ import * as process from 'process';
             Restaurant,
             Section,
           ],
-          synchronize: configService.get('DB.SYNC') === 'true',
+          synchronize: configService.get('DB_SYNC') === 'true',
           ssl: {
             rejectUnauthorized: false, // This is necessary if you're using self-signed SSL certificates
           },

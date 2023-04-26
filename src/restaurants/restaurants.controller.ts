@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Public } from '../common/decorator';
-import { GeocodingService } from '../common/service/geocoding.service';
 import {
   AddCuisineDto,
   AddOptionDto,
@@ -15,10 +14,7 @@ import { Serialize } from '../common/interceptor';
 
 @Controller('restaurants')
 export class RestaurantsController {
-  constructor(
-    private geocodingService: GeocodingService,
-    private restaurantService: RestaurantsService,
-  ) {}
+  constructor(private restaurantService: RestaurantsService) {}
 
   @Post()
   @Public()
@@ -36,6 +32,7 @@ export class RestaurantsController {
 
   @Get('/slug/:slug')
   @Public()
+  @Serialize(RestaurantDto)
   getRestaurantsBySlug(@Param('slug') slug: string) {
     return this.restaurantService.findAllBySlug(slug);
   }
