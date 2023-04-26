@@ -25,6 +25,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './common/guard';
 import { MailModule } from './mail/mail.module';
 import { RolesGuard } from './common/guard/roles.guard';
+import * as process from 'process';
 
 @Module({
   imports: [
@@ -35,7 +36,7 @@ import { RolesGuard } from './common/guard/roles.guard';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        console.log(configService.get('DB.USERNAME'));
+        console.log(process.env['DB.HOST']);
         return {
           type: 'postgres',
           host: configService.get('DB.HOST'),
