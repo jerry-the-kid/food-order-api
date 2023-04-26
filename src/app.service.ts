@@ -6,6 +6,6 @@ export class AppService {
   constructor(private mailService: MailService) {}
 
   getHello() {
-    return 'Hello World!';
+    return { text: 'Hello World!' };
   }
 }
