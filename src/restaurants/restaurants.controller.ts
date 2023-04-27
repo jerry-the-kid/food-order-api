@@ -30,7 +30,7 @@ export class RestaurantsController {
     return this.restaurantService.findOne(parseInt(id));
   }
 
-  @Get('/slug/:slug')
+  @Get('/cuisines/:slug')
   @Public()
   @Serialize(RestaurantDto)
   getRestaurantsBySlug(@Param('slug') slug: string) {
