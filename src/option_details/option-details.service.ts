@@ -26,4 +26,8 @@ export class OptionDetailsService {
 
     return queryResult.raw;
   }
+
+  async findByIds(ids: number[]) {
+    return await this.repo.createQueryBuilder().whereInIds(ids).getMany();
+  }
 }

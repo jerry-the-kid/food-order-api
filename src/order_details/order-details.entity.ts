@@ -16,8 +16,10 @@ export class OrderDetails {
   id: number;
   @Column()
   quantity: number;
-  @Column()
+  @Column({ nullable: true })
   message: string;
+  @Column({ nullable: true })
+  totalPrice: number;
 
   @ManyToOne(() => Order, (order) => order.orderDetails, {
     onDelete: 'CASCADE',

@@ -1,14 +1,23 @@
-import { RestaurantDto } from './restaurant.dto';
-import { Expose, Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
+import { Expose, Transform } from 'class-transformer';
 
 export class RestaurantListDto {
   @Expose()
-  status: string;
+  id: number;
   @Expose()
-  results: number;
+  name: string;
   @Expose()
-  @Type(() => RestaurantDto)
-  @ValidateNested()
-  restaurants: RestaurantDto[];
+  rating: number;
+  @Expose()
+  imgUrl: string;
+  @Expose()
+  slug: string;
+
+  @Expose()
+  durationInMinutes: string;
+  @Expose()
+  distanceInKilometers: string;
+
+  @Expose()
+  @Transform(({ obj }) => obj.account.id)
+  account_id: number;
 }

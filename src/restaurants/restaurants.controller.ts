@@ -28,12 +28,7 @@ export class RestaurantsController {
   @Public()
   @Serialize(RestaurantListDto)
   async getRestaurants() {
-    const restaurants = await this.restaurantService.findAll();
-    return {
-      status: 'success',
-      results: restaurants.length,
-      restaurants,
-    };
+    return this.restaurantService.findAll();
   }
 
   @Get('/nearby')
@@ -50,11 +45,7 @@ export class RestaurantsController {
       sortedRestaurants = sortedRestaurants.slice(0, parseInt(limit));
     }
 
-    return {
-      status: 'success',
-      results: sortedRestaurants.length,
-      restaurants: sortedRestaurants,
-    };
+    return sortedRestaurants;
   }
 
   @Get('/top-rated')
@@ -68,11 +59,7 @@ export class RestaurantsController {
       sortedRestaurants = sortedRestaurants.slice(0, parseInt(limit));
     }
 
-    return {
-      status: 'success',
-      results: sortedRestaurants.length,
-      restaurants: sortedRestaurants,
-    };
+    return sortedRestaurants;
   }
 
   @Get('/:id')
@@ -94,11 +81,7 @@ export class RestaurantsController {
       restaurants = restaurants.slice(0, parseInt(limit));
     }
 
-    return {
-      status: 'success',
-      results: restaurants.length,
-      restaurants,
-    };
+    return restaurants;
   }
 
   @Post('/:id/cuisines')
