@@ -8,6 +8,8 @@ export class RestaurantDto {
   @Expose()
   name: string;
   @Expose()
+  rating: number;
+  @Expose()
   imgUrl: string;
   @Expose()
   startWorkingTime: string;

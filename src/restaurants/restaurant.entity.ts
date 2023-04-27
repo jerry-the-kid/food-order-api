@@ -28,8 +28,10 @@ export class Restaurant {
   imgUrl: string;
   @Column()
   endWorkingTime: string;
-  @Column()
+  @Column({ unique: true })
   slug: string;
+  @Column({ nullable: true, type: 'float' })
+  rating: number;
 
   @OneToOne(() => Account, (account) => account.restaurant, {
     onDelete: 'CASCADE',

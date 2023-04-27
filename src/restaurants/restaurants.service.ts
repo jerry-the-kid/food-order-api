@@ -69,6 +69,18 @@ export class RestaurantsService {
     }
   }
 
+  async findAll() {
+    const restaurants = await this.repo.find({ relations: { account: true } });
+
+    return this.filterRestaurants(restaurants, false);
+  }
+
+  async findNearby() {
+    const restaurants = await this.repo.find({ relations: { account: true } });
+
+    return this.filterRestaurants(restaurants);
+  }
+
   async findOne(id: number) {
     const restaurant = await this.repo.findOne({
       relations: { account: true, cuisines: true, sections: { items: true } },
@@ -153,7 +165,7 @@ export class RestaurantsService {
     return { option: { ...option, optionDetails: optionDetailsList } };
   }
 
-  private async filterRestaurants(restaurants: Restaurant[]) {
+  private async filterRestaurants(restaurants: Restaurant[], filter = true) {
     const calculatedRestaurants = await Promise.all(
       restaurants.map(async (restaurant) => {
         const { lat, lng } = restaurant.account;
@@ -168,6 +180,8 @@ export class RestaurantsService {
         return { ...restaurant, durationInMinutes, distanceInKilometers };
       }),
     );
+
+    if (!filter) return calculatedRestaurants;
 
     return calculatedRestaurants.filter(
       (restaurant) => restaurant.distanceInKilometers < 10,
