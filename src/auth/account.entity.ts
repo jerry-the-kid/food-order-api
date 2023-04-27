@@ -1,4 +1,6 @@
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   Entity,
   OneToMany,
@@ -45,4 +47,14 @@ export class Account {
 
   @OneToMany(() => Order, (order) => order.account)
   orders: Order[];
+
+  @BeforeInsert()
+  setCreatedAt() {
+    this.createdAt = new Date();
+  }
+
+  @BeforeUpdate()
+  setUpdatedAt() {
+    this.updatedAt = new Date();
+  }
 }

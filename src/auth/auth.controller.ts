@@ -23,8 +23,7 @@ function createSendCookie(response: Response, data, deleteCookies = false) {
     ),
     httpOnly: true,
     sameSite: 'none',
-    secure: true,
-    // secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production',
   };
   const accessToken = data?.access_token ?? null;
   const refreshToken = data?.refresh_token ?? null;

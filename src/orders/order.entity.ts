@@ -1,4 +1,12 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+} from 'typeorm';
 import { Restaurant } from '../restaurants/restaurant.entity';
 import { Account } from '../auth/account.entity';
 import { OrderDetails } from '../order_details/order-details.entity';
@@ -11,9 +19,9 @@ export class Order {
   status: number;
   @Column()
   totalPrice: number;
-  @Column()
+  @Column({ nullable: true })
   createdAt: Date;
-  @Column()
+  @Column({ nullable: true })
   updatedAt: Date;
   @ManyToOne(() => Restaurant, (restaurant) => restaurant.orders, {
     onDelete: 'SET NULL',
@@ -27,4 +35,14 @@ export class Order {
 
   @OneToMany(() => OrderDetails, (orderDetails) => orderDetails.order)
   orderDetails: OrderDetails[];
+
+  @BeforeInsert()
+  setCreatedAt() {
+    this.createdAt = new Date();
+  }
+
+  @BeforeUpdate()
+  setUpdatedAt() {
+    this.updatedAt = new Date();
+  }
 }

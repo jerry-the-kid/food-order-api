@@ -29,17 +29,20 @@ export class AuthService {
     const otpExp = new Date(Date.now() + 3 * 60 * 1000);
     let userUpdated: Account;
     if (!user) {
-      userUpdated = await this.repo.save({
+      const userInstance = this.repo.create({
         email,
         otp: otpHashed,
         otpExpires: otpExp,
       });
+      userUpdated = await this.repo.save(userInstance);
     } else {
-      userUpdated = await this.repo.save({
+      const userInstance = this.repo.create({
         ...user,
         otp: otpHashed,
         otpExpires: otpExp,
       });
+
+      userUpdated = await this.repo.save(userInstance);
     }
     await this.mailService.sendOtpConfirmation({ ...userUpdated, otp });
 

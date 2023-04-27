@@ -20,7 +20,6 @@ export class AccountService {
       lng,
       lat,
       role: 'salesman',
-      createdAt: new Date(),
     });
 
     return await this.repo.save(account);
