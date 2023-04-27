@@ -1,4 +1,4 @@
-import { Expose, Transform } from 'class-transformer';
+import { Expose } from 'class-transformer';
 
 export class RestaurantListDto {
   @Expose()
@@ -18,6 +18,9 @@ export class RestaurantListDto {
   distanceInKilometers: string;
 
   @Expose()
-  @Transform(({ obj }) => obj.account.id)
-  account_id: number;
+  cuisines: string[];
+
+  // @Expose()
+  // @Transform(({ obj }) => obj.account.id)
+  // account_id: number;
 }

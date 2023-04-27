@@ -69,14 +69,45 @@ export class RestaurantsService {
     }
   }
 
-  async findAll() {
-    const restaurants = await this.repo.find({ relations: { account: true } });
+  async findAllRestaurantQuery(cusinesId?: number) {
+    const query = await this.repo
+      .createQueryBuilder('restaurant')
+      .leftJoin('restaurant.account', 'account')
+      .leftJoinAndSelect('restaurant.cuisines', 'cuisine')
+      .select([
+        'restaurant.id as id',
+        'restaurant.name as name',
+        'restaurant.imgUrl as imgUrl',
+        'restaurant.slug as slug',
+        'restaurant.rating as rating',
+        'account.lat as lat',
+        'account.lng as lng',
+        'ARRAY_AGG(cuisine.name) as cuisines',
+      ])
+      .groupBy('restaurant.id, account.id');
 
+    if (cusinesId) {
+      query.where('cuisine.id = :cusinesId', { cusinesId });
+    }
+
+    const restaurants = await query.getRawMany();
+
+    return restaurants.map((restaurant) => {
+      return {
+        ...restaurant,
+        imgUrl: restaurant.imgurl,
+        account: { lat: restaurant.lat, lng: restaurant.lng },
+      };
+    });
+  }
+
+  async findAll() {
+    const restaurants = await this.findAllRestaurantQuery();
     return this.filterRestaurants(restaurants, false);
   }
 
   async findNearby() {
-    const restaurants = await this.repo.find({ relations: { account: true } });
+    const restaurants = await this.findAllRestaurantQuery();
 
     return this.filterRestaurants(restaurants);
   }
@@ -98,10 +129,7 @@ export class RestaurantsService {
     const cuisines = await this.cuisinesService.findOneBySlug(slug);
 
     if (!cuisines) throw new NotFoundException();
-    const restaurants = await this.repo.find({
-      relations: { cuisines: true, account: true },
-      where: { cuisines: { id: cuisines.id } },
-    });
+    const restaurants = await this.findAllRestaurantQuery(cuisines.id);
 
     return this.filterRestaurants(restaurants);
   }
