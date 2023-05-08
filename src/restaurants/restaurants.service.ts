@@ -96,7 +96,6 @@ export class RestaurantsService {
     }
 
     const data = await paginateRaw(query, { limit, page });
-    console.log(data);
 
     let restaurants: any = data.items;
 
@@ -128,9 +127,8 @@ export class RestaurantsService {
 
     if (!cuisines) throw new NotFoundException();
     const data = await this.findAllRestaurantQuery(limit, page, cuisines.id);
-
     return {
-      restaurants: this.filterRestaurants(data.restaurants),
+      restaurants: await this.filterRestaurants(data.restaurants),
       meta: data.meta,
     };
   }
@@ -204,7 +202,6 @@ export class RestaurantsService {
   }
 
   async addOption(restaurantId: number, dto: AddOptionDto) {
-    console.log(dto);
     const restaurant = await this.repo.findOne({
       relations: { options: true },
       where: { id: restaurantId },
