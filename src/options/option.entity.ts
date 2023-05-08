@@ -1,4 +1,6 @@
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   Entity,
   JoinTable,
@@ -22,6 +24,9 @@ export class Option {
   @Column({ default: false })
   optional: boolean;
 
+  @Column()
+  type: string;
+
   @ManyToOne(() => Restaurant, (restaurant) => restaurant.options)
   restaurant: Restaurant;
 
@@ -31,4 +36,14 @@ export class Option {
 
   @OneToMany(() => OptionDetails, (optionDetails) => optionDetails.option)
   optionDetails: OptionDetails[];
+
+  // Should be test
+  @BeforeInsert()
+  @BeforeUpdate()
+  setTypeBeforeInsertAndUpdate() {
+    if (this.optional == false && this.limit == 1) {
+      this.type = 'checkbox';
+    }
+    this.type = 'checkbox';
+  }
 }
