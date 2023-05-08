@@ -6,3 +6,4 @@ export * from './add-option.dto';
 export * from './cuisines.dto';
 export * from './sections.dto';
 export * from './options.dto';
+export * from './restaurant-list.dto';

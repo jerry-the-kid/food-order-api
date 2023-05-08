@@ -1,6 +1,7 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
 
-export class RestaurantListDto {
+class RestaurantElementDto {
   @Expose()
   id: number;
   @Expose()
@@ -19,8 +20,25 @@ export class RestaurantListDto {
 
   @Expose()
   cuisines: string[];
+}
 
-  // @Expose()
-  // @Transform(({ obj }) => obj.account.id)
-  // account_id: number;
+class MetaDto {
+  @Expose()
+  itemsPerPage: number;
+  @Expose()
+  totalPages: number;
+  @Expose()
+  currentPage: number;
+}
+
+export class RestaurantListDto {
+  @Expose()
+  @Type(() => MetaDto)
+  @ValidateNested()
+  readonly meta: MetaDto;
+
+  @Expose()
+  @Type(() => RestaurantElementDto)
+  @ValidateNested({ each: true })
+  readonly restaurants: RestaurantElementDto[];
 }

@@ -19,6 +19,7 @@ import { SectionService } from '../sections/section.service';
 import { OptionsService } from '../options/options.service';
 import { OptionDetailsService } from '../option_details/option-details.service';
 import { GeocodingService } from '../common/service/geocoding.service';
+import { paginateRaw } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class RestaurantsService {
@@ -69,7 +70,11 @@ export class RestaurantsService {
     }
   }
 
-  async findAllRestaurantQuery(cusinesId?: number) {
+  async findAllRestaurantQuery(
+    limit: number,
+    page: number,
+    cusinesId?: number,
+  ) {
     const query = await this.repo
       .createQueryBuilder('restaurant')
       .leftJoin('restaurant.account', 'account')
@@ -90,26 +95,44 @@ export class RestaurantsService {
       query.where('cuisine.id = :cusinesId', { cusinesId });
     }
 
-    const restaurants = await query.getRawMany();
+    const data = await paginateRaw(query, { limit, page });
+    console.log(data);
 
-    return restaurants.map((restaurant) => {
+    let restaurants: any = data.items;
+
+    restaurants = restaurants.map((restaurant) => {
       return {
         ...restaurant,
         imgUrl: restaurant.imgurl,
         account: { lat: restaurant.lat, lng: restaurant.lng },
       };
     });
+
+    return {
+      restaurants,
+      meta: data.meta,
+    };
   }
 
-  async findAll() {
-    const restaurants = await this.findAllRestaurantQuery();
-    return this.filterRestaurants(restaurants, false);
+  async findNearby(limit: number, page: number) {
+    const data = await this.findAllRestaurantQuery(limit, page);
+    const restaurants = await this.filterRestaurants(data.restaurants);
+    return {
+      restaurants,
+      meta: data.meta,
+    };
   }
 
-  async findNearby() {
-    const restaurants = await this.findAllRestaurantQuery();
+  async findAllBySlug(slug: string, limit: number, page: number) {
+    const cuisines = await this.cuisinesService.findOneBySlug(slug);
 
-    return this.filterRestaurants(restaurants);
+    if (!cuisines) throw new NotFoundException();
+    const data = await this.findAllRestaurantQuery(limit, page, cuisines.id);
+
+    return {
+      restaurants: this.filterRestaurants(data.restaurants),
+      meta: data.meta,
+    };
   }
 
   async findOne(id: number) {
@@ -125,13 +148,25 @@ export class RestaurantsService {
     return restaurant;
   }
 
-  async findAllBySlug(slug: string) {
-    const cuisines = await this.cuisinesService.findOneBySlug(slug);
+  async findOneBySlug(slug: string) {
+    const restaurant = await this.repo.findOne({
+      relations: {
+        account: true,
+        cuisines: true,
+        sections: { items: { options: { optionDetails: true } } },
+      },
+      where: { slug: slug },
+    });
 
-    if (!cuisines) throw new NotFoundException();
-    const restaurants = await this.findAllRestaurantQuery(cuisines.id);
+    const { lat, lng } = restaurant.account;
+    const { durationInMinutes, distanceInKilometers } =
+      await this.getCalculatedTimeAndDistance(lat, lng);
 
-    return this.filterRestaurants(restaurants);
+    if (!restaurant) {
+      throw new NotFoundException('restaurant not found !!');
+    }
+
+    return { ...restaurant, durationInMinutes, distanceInKilometers };
   }
 
   async addCuisine(restaurantId: number, { id }: AddCuisineDto) {
@@ -188,9 +223,18 @@ export class RestaurantsService {
       );
 
     restaurant.options.push(option);
-    this.repo.save(restaurant);
+    await this.repo.save(restaurant);
 
     return { option: { ...option, optionDetails: optionDetailsList } };
+  }
+
+  async getCalculatedTimeAndDistance(lat, lng) {
+    return await this.geocodingService.getTravelTime(
+      10.856332803462626,
+      106.63111814660117,
+      lat,
+      lng,
+    );
   }
 
   private async filterRestaurants(restaurants: Restaurant[], filter = true) {
@@ -198,12 +242,7 @@ export class RestaurantsService {
       restaurants.map(async (restaurant) => {
         const { lat, lng } = restaurant.account;
         const { durationInMinutes, distanceInKilometers } =
-          await this.geocodingService.getTravelTime(
-            10.856332803462626,
-            106.63111814660117,
-            lat,
-            lng,
-          );
+          await this.getCalculatedTimeAndDistance(lat, lng);
 
         return { ...restaurant, durationInMinutes, distanceInKilometers };
       }),

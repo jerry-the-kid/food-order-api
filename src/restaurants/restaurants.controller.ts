@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { Public } from '../common/decorator';
 import {
   AddCuisineDto,
@@ -7,11 +16,11 @@ import {
   CreateRestaurantDto,
   CuisinesDto,
   RestaurantDto,
+  RestaurantListDto,
   SectionsDto,
 } from './dto';
 import { RestaurantsService } from './restaurants.service';
 import { Serialize } from '../common/interceptor';
-import { RestaurantListDto } from './dto/restaurant-list.dto';
 
 @Controller('restaurants')
 export class RestaurantsController {
@@ -24,42 +33,51 @@ export class RestaurantsController {
     return this.restaurantService.create(dto);
   }
 
-  @Get()
-  @Public()
-  @Serialize(RestaurantListDto)
-  async getRestaurants() {
-    return this.restaurantService.findAll();
-  }
+  // @Get()
+  // @Public()
+  // @Serialize(RestaurantListDto)
+  // async getRestaurants() {
+  //   return this.restaurantService.findAll();
+  // }
 
   @Get('/nearby')
   @Public()
   @Serialize(RestaurantListDto)
-  async getNearbyRestaurants(@Query('limit') limit: string) {
-    const restaurants = await this.restaurantService.findNearby();
-
-    let sortedRestaurants = restaurants.sort(
-      (a, b) => a.distanceInKilometers - b.distanceInKilometers,
+  async getNearbyRestaurants(
+    @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit = 100,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+  ) {
+    limit = limit > 100 ? 100 : limit;
+    const { meta, restaurants } = await this.restaurantService.findNearby(
+      limit,
+      page,
     );
 
-    if (limit) {
-      sortedRestaurants = sortedRestaurants.slice(0, parseInt(limit));
-    }
-
-    return sortedRestaurants;
+    return {
+      meta: meta,
+      restaurants: restaurants.sort(
+        (a, b) => a.distanceInKilometers - b.distanceInKilometers,
+      ),
+    };
   }
 
   @Get('/top-rated')
   @Public()
   @Serialize(RestaurantListDto)
-  async getTopRatedRestaurants(@Query('limit') limit: string) {
-    const restaurants = await this.restaurantService.findNearby();
-    let sortedRestaurants = restaurants.sort((a, b) => b.rating - a.rating);
+  async getTopRatedRestaurants(
+    @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit = 100,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+  ) {
+    limit = limit > 100 ? 100 : limit;
+    const { meta, restaurants } = await this.restaurantService.findNearby(
+      limit,
+      page,
+    );
 
-    if (limit) {
-      sortedRestaurants = sortedRestaurants.slice(0, parseInt(limit));
-    }
-
-    return sortedRestaurants;
+    return {
+      meta: meta,
+      restaurants: restaurants.sort((a, b) => b.rating - a.rating),
+    };
   }
 
   @Get('/:id')
@@ -69,19 +87,23 @@ export class RestaurantsController {
     return this.restaurantService.findOne(parseInt(id));
   }
 
+  @Get('/slug/:slug')
+  @Public()
+  @Serialize(RestaurantDto)
+  getRestaurantsBySlug(@Param('slug') slug: string) {
+    return this.restaurantService.findOneBySlug(slug);
+  }
+
   @Get('/cuisines/:slug')
   @Public()
   @Serialize(RestaurantListDto)
-  async getRestaurantsBySlug(
+  async getRestaurantsByCuisineSlug(
     @Param('slug') slug: string,
-    @Query('limit') limit: string,
+    @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit = 100,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
   ) {
-    let restaurants = await this.restaurantService.findAllBySlug(slug);
-    if (limit) {
-      restaurants = restaurants.slice(0, parseInt(limit));
-    }
-
-    return restaurants;
+    limit = limit > 100 ? 100 : limit;
+    return await this.restaurantService.findAllBySlug(slug, limit, page);
   }
 
   @Post('/:id/cuisines')

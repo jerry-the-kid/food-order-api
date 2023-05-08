@@ -31,7 +31,8 @@ export class RestaurantDto {
 
   @Expose()
   @Transform(({ obj }) => obj.cuisines)
-  cuisines: Cuisine[];
+  @Transform(({ value }) => value.map((cuisine: Cuisine) => cuisine.name))
+  cuisines: string[];
 
   @Expose()
   @Transform(({ obj }) => obj.sections)
