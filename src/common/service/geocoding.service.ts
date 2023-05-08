@@ -27,6 +27,21 @@ export class GeocodingService {
     return data.features[0].geometry.coordinates;
   }
 
+  async reverseGeocodeCoordinates(longitude: number, latitude: number) {
+    const url = `${this.baseUrlAddress}${longitude},${latitude}.json?access_token=${this.apiKey}`;
+    const data = await axios
+      .get(url)
+      .then((res) => res.data)
+      .catch((error) => {
+        if (error.response) {
+          throw new HttpException(error.response.data, error.response.status);
+        }
+        throw new HttpException(error.message, 500);
+      });
+
+    return data.features[0].place_name;
+  }
+
   //   10.732854766636226,
   //   106.69966286443857,
   //   10.753235505634327,

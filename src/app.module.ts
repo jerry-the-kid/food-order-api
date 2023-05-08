@@ -27,6 +27,7 @@ import { MailModule } from './mail/mail.module';
 import { RolesGuard } from './common/guard/roles.guard';
 
 import * as process from 'process';
+import { GeocodingService } from './common/service/geocoding.service';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import * as process from 'process';
   ],
   controllers: [AppController],
   providers: [
+    GeocodingService,
     AppService,
     {
       provide: APP_GUARD,
