@@ -20,4 +20,11 @@ export class OptionsService {
 
     return option;
   }
+
+  async findManyByIds(ids: number[]) {
+    return await this.repo
+      .createQueryBuilder()
+      .where('id IN (:...ids)', { ids })
+      .getMany();
+  }
 }

@@ -21,5 +21,6 @@ import { OptionDetailsModule } from '../option_details/option_details.module';
   ],
   controllers: [RestaurantsController],
   providers: [GeocodingService, RestaurantsService],
+  exports: [RestaurantsService],
 })
 export class RestaurantsModule {}

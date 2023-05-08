@@ -54,4 +54,10 @@ export class ItemsService {
       where: { id },
     });
   }
+
+  async findByIdRaw(id: number) {
+    return this.repo.findOne({
+      where: { id },
+    });
+  }
 }

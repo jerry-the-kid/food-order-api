@@ -11,6 +11,12 @@ export class AccountService {
     private geocodingService: GeocodingService,
   ) {}
 
+  async getCurrentUser(id: number) {
+    const user = await this.repo.findOneBy({ id });
+    if (!user) throw new Error('User not found');
+    return user;
+  }
+
   async createRestaurantAccount(dto: CreateRestaurantDto) {
     const [lng, lat] = await this.geocodingService.geocodeAddress(dto.address);
     const account = this.repo.create({

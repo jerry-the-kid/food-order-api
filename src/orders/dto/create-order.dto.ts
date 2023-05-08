@@ -12,7 +12,7 @@ export class CreateOrderDetailsDto {
 
   message: string;
 
-  optionsDetails: number[];
+  optionsDetailsIds: number[];
 }
 
 export class CreateOrderDto {
