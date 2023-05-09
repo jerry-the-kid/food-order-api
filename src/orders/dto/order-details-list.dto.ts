@@ -56,6 +56,10 @@ export class OrderDetailsListDto {
   restaurantName: string;
 
   @Expose()
+  @Transform(({ obj }) => obj.restaurant.slug)
+  restaurantSlug: string;
+
+  @Expose()
   @Type(() => OrderDetailsDto)
   @ValidateNested()
   orderDetails: OrderDetailsDto[];
