@@ -1,8 +1,8 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './account.entity';
@@ -131,11 +131,12 @@ export class AuthService {
   async refreshToken(userId: number, rt: string) {
     const user = await this.repo.findOneBy({ id: userId });
 
-    if (!user || !user.hashRt) throw new ForbiddenException('Access Denied');
+    if (!user || !user.hashRt)
+      throw new UnauthorizedException('User not match');
 
     const rtMatches = await argon.verify(user.hashRt, rt);
 
-    if (!rtMatches) throw new ForbiddenException('Access Denied');
+    if (!rtMatches) throw new UnauthorizedException('Refresh Token not match');
 
     const tokens = await this.getTokens(user.id, user.email, user.role);
     await this.updateRtHash(user.id, tokens.refresh_token);
