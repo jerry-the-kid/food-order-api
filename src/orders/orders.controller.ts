@@ -25,7 +25,7 @@ export class OrdersController {
 
   @Get()
   @Serialize(OrderDetailsListDto)
-  getAllOrders() {
+  async getAllOrders() {
     return this.orderService.getAllOrders();
   }
 

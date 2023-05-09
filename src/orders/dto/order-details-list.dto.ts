@@ -1,4 +1,4 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 
 class ItemDto {
@@ -34,6 +34,14 @@ export class OrderDetailsListDto {
   createdAt: Date;
   @Expose()
   updatedAt: Date;
+
+  @Expose()
+  @Transform(({ obj }) => obj.restaurant.id)
+  restaurantId: number;
+
+  @Expose()
+  @Transform(({ obj }) => obj.restaurant.name)
+  restaurantName: string;
 
   @Expose()
   @Type(() => OrderDetailsDto)
