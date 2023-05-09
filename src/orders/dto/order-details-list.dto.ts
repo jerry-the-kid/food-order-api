@@ -1,6 +1,13 @@
 import { Expose, Transform, Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 
+class OptionDetailsDto {
+  @Expose()
+  id: number;
+  @Expose()
+  name: string;
+}
+
 class ItemDto {
   @Expose()
   name: string;
@@ -21,6 +28,11 @@ class OrderDetailsDto {
   @Type(() => ItemDto)
   @ValidateNested()
   item: ItemDto;
+
+  @Expose()
+  @Type(() => OptionDetailsDto)
+  @ValidateNested()
+  optionsDetails: OptionDetailsDto[];
 }
 
 export class OrderDetailsListDto {
