@@ -1,4 +1,11 @@
-import { Controller, Get, ParseFloatPipe, Query, Res } from '@nestjs/common';
+import {
+  Controller,
+  ForbiddenException,
+  Get,
+  ParseFloatPipe,
+  Query,
+  Res,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { GeocodingService } from './common/service/geocoding.service';
 import { Public } from './common/decorator';
@@ -11,9 +18,15 @@ export class AppController {
     private readonly geoCodingService: GeocodingService,
   ) {}
 
+  @Get('/test')
+  @Public()
+  test() {
+    throw new ForbiddenException('Deny Access');
+  }
+
   @Get('me/address/')
   @Public()
-  async getHello(
+  async getAddress(
     @Query('lat', ParseFloatPipe) lat: number,
     @Query('lng', ParseFloatPipe) lng: number,
     @Res() res: Response,
