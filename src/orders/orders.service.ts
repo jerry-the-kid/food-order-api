@@ -37,6 +37,12 @@ export class OrdersService {
     return this.orderRepository.save(order);
   }
 
+  async getAllOrders() {
+    return this.orderRepository.find({
+      relations: { orderDetails: true },
+    });
+  }
+
   async findOrdersSelf(user: any) {
     if (!user.id) throw new NotFoundException('User not found');
     return this.orderRepository.find({

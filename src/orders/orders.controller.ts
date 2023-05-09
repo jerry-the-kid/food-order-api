@@ -24,6 +24,11 @@ export class OrdersController {
     return this.orderService.create(dto, req.user);
   }
 
+  @Get()
+  getAllOrders() {
+    return this.orderService.getAllOrders();
+  }
+
   @Get('/me')
   findOrdersSelf(@Req() req: Request) {
     return this.orderService.findOrdersSelf(req.user);
