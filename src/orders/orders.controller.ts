@@ -8,11 +8,10 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
-import { CreateOrderDto } from './dto';
+import { CreateOrderDto, OrderDetailsListDto, OrderDto } from './dto';
 import { OrdersService } from './orders.service';
 import { Request } from 'express';
 import { Serialize } from '../common/interceptor';
-import { OrderDto } from './dto/order.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -25,11 +24,13 @@ export class OrdersController {
   }
 
   @Get()
+  @Serialize(OrderDetailsListDto)
   getAllOrders() {
     return this.orderService.getAllOrders();
   }
 
   @Get('/me')
+  @Serialize(OrderDetailsListDto)
   findOrdersSelf(@Req() req: Request) {
     return this.orderService.findOrdersSelf(req.user);
   }

@@ -19,6 +19,7 @@ export class OrderDetailsService {
     const item = await this.itemsService.findByIdRaw(
       createOrderDetailsDto.itemId,
     );
+
     const optionsDetails = await this.optionsDetailsService.findByIds(
       createOrderDetailsDto.optionsDetailsIds,
     );

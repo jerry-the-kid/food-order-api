@@ -39,7 +39,7 @@ export class OrdersService {
 
   async getAllOrders() {
     return this.orderRepository.find({
-      relations: { orderDetails: true },
+      relations: { orderDetails: { item: true } },
     });
   }
 
@@ -47,7 +47,7 @@ export class OrdersService {
     if (!user.id) throw new NotFoundException('User not found');
     return this.orderRepository.find({
       where: user.id,
-      relations: { orderDetails: true },
+      relations: { orderDetails: { item: true } },
     });
   }
 
