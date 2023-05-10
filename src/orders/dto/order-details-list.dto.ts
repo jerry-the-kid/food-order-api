@@ -2,13 +2,6 @@ import { Expose, Transform, Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { OptionDetails } from '../../option_details/option-details.entity';
 
-class OptionDetailsDto {
-  @Expose()
-  id: number;
-  @Expose()
-  name: string;
-}
-
 class ItemDto {
   @Expose()
   name: string;
