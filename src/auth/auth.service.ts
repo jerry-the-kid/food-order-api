@@ -103,7 +103,7 @@ export class AuthService {
           email,
           role,
         },
-        { secret: '19GHEbSta4p5pL07U46EzaIZXHouLC', expiresIn: 60 * 2 },
+        { secret: '19GHEbSta4p5pL07U46EzaIZXHouLC', expiresIn: 60 * 15 },
       ),
       this.jwtService.signAsync(
         {
