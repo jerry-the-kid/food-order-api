@@ -7,6 +7,8 @@ import {
   ParseIntPipe,
   Post,
   Query,
+  Req,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Public } from '../common/decorator';
 import {
@@ -21,6 +23,7 @@ import {
 } from './dto';
 import { RestaurantsService } from './restaurants.service';
 import { Serialize } from '../common/interceptor';
+import { LocationInterceptor } from './interceptor';
 
 @Controller('restaurants')
 export class RestaurantsController {
@@ -43,14 +46,17 @@ export class RestaurantsController {
   @Get('/nearby')
   @Public()
   @Serialize(RestaurantListDto)
+  @UseInterceptors(LocationInterceptor)
   async getNearbyRestaurants(
     @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit = 100,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Req() request,
   ) {
     limit = limit > 100 ? 100 : limit;
     const { meta, restaurants } = await this.restaurantService.findNearby(
       limit,
       page,
+      request.location,
     );
 
     return {
@@ -64,14 +70,18 @@ export class RestaurantsController {
   @Get('/top-rated')
   @Public()
   @Serialize(RestaurantListDto)
+  @UseInterceptors(LocationInterceptor)
   async getTopRatedRestaurants(
     @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit = 100,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Req() request,
   ) {
     limit = limit > 100 ? 100 : limit;
+
     const { meta, restaurants } = await this.restaurantService.findNearby(
       limit,
       page,
+      request.location,
     );
 
     return {
@@ -89,21 +99,29 @@ export class RestaurantsController {
 
   @Get('/slug/:slug')
   @Public()
+  @UseInterceptors(LocationInterceptor)
   @Serialize(RestaurantDto)
-  getRestaurantsBySlug(@Param('slug') slug: string) {
-    return this.restaurantService.findOneBySlug(slug);
+  getRestaurantsBySlug(@Param('slug') slug: string, @Req() request) {
+    return this.restaurantService.findOneBySlug(slug, request.location);
   }
 
   @Get('/cuisines/:slug')
   @Public()
+  @UseInterceptors(LocationInterceptor)
   @Serialize(RestaurantListDto)
   async getRestaurantsByCuisineSlug(
     @Param('slug') slug: string,
     @Query('limit', new DefaultValuePipe(100), ParseIntPipe) limit = 100,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Req() request,
   ) {
     limit = limit > 100 ? 100 : limit;
-    return await this.restaurantService.findAllBySlug(slug, limit, page);
+    return await this.restaurantService.findAllBySlug(
+      slug,
+      limit,
+      page,
+      request.location,
+    );
   }
 
   @Post('/:id/cuisines')

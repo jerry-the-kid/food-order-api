@@ -113,22 +113,34 @@ export class RestaurantsService {
     };
   }
 
-  async findNearby(limit: number, page: number) {
+  async findNearby(
+    limit: number,
+    page: number,
+    location: { lat: number; lng: number },
+  ) {
     const data = await this.findAllRestaurantQuery(limit, page);
-    const restaurants = await this.filterRestaurants(data.restaurants);
+    const restaurants = await this.filterRestaurants(
+      data.restaurants,
+      location,
+    );
     return {
       restaurants,
       meta: data.meta,
     };
   }
 
-  async findAllBySlug(slug: string, limit: number, page: number) {
+  async findAllBySlug(
+    slug: string,
+    limit: number,
+    page: number,
+    location: { lat: number; lng: number },
+  ) {
     const cuisines = await this.cuisinesService.findOneBySlug(slug);
 
     if (!cuisines) throw new NotFoundException();
     const data = await this.findAllRestaurantQuery(limit, page, cuisines.id);
     return {
-      restaurants: await this.filterRestaurants(data.restaurants),
+      restaurants: await this.filterRestaurants(data.restaurants, location),
       meta: data.meta,
     };
   }
@@ -146,7 +158,7 @@ export class RestaurantsService {
     return restaurant;
   }
 
-  async findOneBySlug(slug: string) {
+  async findOneBySlug(slug: string, location) {
     const restaurant = await this.repo.findOne({
       relations: {
         account: true,
@@ -158,7 +170,7 @@ export class RestaurantsService {
 
     const { lat, lng } = restaurant.account;
     const { durationInMinutes, distanceInKilometers } =
-      await this.getCalculatedTimeAndDistance(lat, lng);
+      await this.getCalculatedTimeAndDistance(lat, lng, location);
 
     if (!restaurant) {
       throw new NotFoundException('restaurant not found !!');
@@ -225,27 +237,34 @@ export class RestaurantsService {
     return { option: { ...option, optionDetails: optionDetailsList } };
   }
 
-  async getCalculatedTimeAndDistance(lat, lng) {
+  async getCalculatedTimeAndDistance(
+    lat,
+    lng,
+    location: { lat: number; lng: number },
+  ) {
     return await this.geocodingService.getTravelTime(
-      10.856332803462626,
-      106.63111814660117,
+      location.lat,
+      location.lng,
       lat,
       lng,
     );
   }
 
-  private async filterRestaurants(restaurants: Restaurant[], filter = true) {
+  private async filterRestaurants(
+    restaurants: Restaurant[],
+    location: { lat: number; lng: number },
+  ) {
     const calculatedRestaurants = await Promise.all(
       restaurants.map(async (restaurant) => {
         const { lat, lng } = restaurant.account;
         const { durationInMinutes, distanceInKilometers } =
-          await this.getCalculatedTimeAndDistance(lat, lng);
+          await this.getCalculatedTimeAndDistance(lat, lng, location);
 
         return { ...restaurant, durationInMinutes, distanceInKilometers };
       }),
     );
 
-    if (!filter) return calculatedRestaurants;
+    // if (!filter) return calculatedRestaurants;
 
     return calculatedRestaurants.filter(
       (restaurant) => restaurant.distanceInKilometers < 10,
