@@ -3,6 +3,7 @@ import { Account } from './account.entity';
 import { Repository } from 'typeorm';
 import { CreateRestaurantDto } from './dto';
 import { GeocodingService } from '../common/service/geocoding.service';
+import * as argon from 'argon2';
 
 export class AccountService {
   constructor(
@@ -26,6 +27,7 @@ export class AccountService {
       lng,
       lat,
       role: 'salesman',
+      password: await argon.hash(dto.password),
     });
 
     return await this.repo.save(account);

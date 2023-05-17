@@ -31,7 +31,6 @@ export class RestaurantsController {
 
   @Post()
   @Public()
-  @Serialize(RestaurantDto)
   createRestaurant(@Body() dto: CreateRestaurantDto) {
     return this.restaurantService.create(dto);
   }

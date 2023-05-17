@@ -7,11 +7,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './account.entity';
 import { Repository } from 'typeorm';
-import { SignInDto } from './dto';
+import { EmailPwAuthDto, SignInDto } from './dto';
 import * as argon from 'argon2';
 import { Tokens } from './types';
 import { JwtService } from '@nestjs/jwt';
 import { MailService } from '../mail/mail.service';
+import { AccountService } from './account.service';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,7 @@ export class AuthService {
     private repo: Repository<Account>,
     private jwtService: JwtService,
     private mailService: MailService,
+    private accountService: AccountService,
   ) {}
 
   async getOtp(email: string) {
@@ -152,5 +154,16 @@ export class AuthService {
     }
 
     return otp;
+  }
+
+  async restaurantLogin(dto: EmailPwAuthDto) {
+    const account = await this.repo.findOneBy({ email: dto.email });
+    if (!account)
+      throw new NotFoundException('Account not found with that email');
+    const passwordMatches = await argon.verify(account.password, dto.password);
+
+    if (!passwordMatches) throw new UnauthorizedException('Password not match');
+
+    return this.getOtp(account.email);
   }
 }

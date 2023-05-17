@@ -38,4 +38,8 @@ export class CreateRestaurantDto {
   @IsString()
   @IsNotEmpty()
   firstCuisineId: number;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
 }

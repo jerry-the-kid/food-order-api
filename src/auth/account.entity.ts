@@ -17,6 +17,8 @@ export class Account {
   @Column({ unique: true })
   email: string;
   @Column({ nullable: true })
+  password: string;
+  @Column({ nullable: true })
   phone: string;
   @Column({ nullable: true })
   name: string;

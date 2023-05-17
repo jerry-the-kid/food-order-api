@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignInDto } from './dto';
+import { EmailPwAuthDto, SignInDto } from './dto';
 import { CookieOptions, Request, Response } from 'express';
 import { RtGuard } from '../common/guard';
 import { GetCurrentUser, Public } from '../common/decorator';
@@ -81,5 +81,12 @@ export class AccountsController {
       user['refreshToken'],
     );
     createSendCookie(req.res, data);
+  }
+
+  @Public()
+  @Post('local/restaurant-login')
+  @HttpCode(HttpStatus.OK)
+  async restaurantLogin(@Body() dto: EmailPwAuthDto) {
+    return this.authService.restaurantLogin(dto);
   }
 }

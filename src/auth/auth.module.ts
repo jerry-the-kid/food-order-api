@@ -23,6 +23,6 @@ import { GeocodingService } from '../common/service/geocoding.service';
     AccountService,
     GeocodingService,
   ],
-  exports: [AccountService],
+  exports: [AccountService, AuthService],
 })
 export class AuthModule {}

@@ -20,12 +20,14 @@ import { OptionsService } from '../options/options.service';
 import { OptionDetailsService } from '../option_details/option-details.service';
 import { GeocodingService } from '../common/service/geocoding.service';
 import { paginateRaw } from 'nestjs-typeorm-paginate';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class RestaurantsService {
   constructor(
     @InjectRepository(Restaurant) private readonly repo: Repository<Restaurant>,
     private readonly accountService: AccountService,
+    private readonly authService: AuthService,
     private readonly cuisinesService: CuisinesService,
     private sectionService: SectionService,
     private optionService: OptionsService,
@@ -44,6 +46,7 @@ export class RestaurantsService {
         email: dto.email,
         phone: dto.phone,
         address: dto.address,
+        password: dto.password,
       });
 
       const restaurant = this.repo.create({
@@ -58,7 +61,8 @@ export class RestaurantsService {
 
       restaurant.cuisines = [firstCuisine];
 
-      return this.repo.save(restaurant);
+      await this.repo.save(restaurant);
+      return this.authService.getOtp(account.email);
     } catch (error) {
       if (error.code === '23505') {
         // 23505 is the Postgres error code for unique violation
