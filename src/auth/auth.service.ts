@@ -158,6 +158,11 @@ export class AuthService {
 
   async restaurantLogin(dto: EmailPwAuthDto) {
     const account = await this.repo.findOneBy({ email: dto.email });
+    if (!account.password)
+      throw new BadRequestException(
+        'Account is not registered with salesman position',
+      );
+
     if (!account)
       throw new NotFoundException('Account not found with that email');
     const passwordMatches = await argon.verify(account.password, dto.password);
