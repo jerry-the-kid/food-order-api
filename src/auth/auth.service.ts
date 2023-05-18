@@ -12,7 +12,6 @@ import * as argon from 'argon2';
 import { Tokens } from './types';
 import { JwtService } from '@nestjs/jwt';
 import { MailService } from '../mail/mail.service';
-import { AccountService } from './account.service';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +20,6 @@ export class AuthService {
     private repo: Repository<Account>,
     private jwtService: JwtService,
     private mailService: MailService,
-    private accountService: AccountService,
   ) {}
 
   async getOtp(email: string) {
