@@ -1,11 +1,4 @@
-import {
-  Controller,
-  ForbiddenException,
-  Get,
-  ParseFloatPipe,
-  Query,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, ParseFloatPipe, Query, Res } from '@nestjs/common';
 import { AppService } from './app.service';
 import { GeocodingService } from './common/service/geocoding.service';
 import { Public } from './common/decorator';
@@ -19,9 +12,8 @@ export class AppController {
   ) {}
 
   @Get('/test')
-  @Public()
   test() {
-    throw new ForbiddenException('Deny Access');
+    return { test: 'test' };
   }
 
   @Get('me/address/')
