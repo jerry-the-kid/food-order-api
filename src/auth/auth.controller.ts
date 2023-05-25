@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -14,6 +15,8 @@ import { CookieOptions, Request, Response } from 'express';
 import { RtGuard } from '../common/guard';
 import { GetCurrentUser, Public } from '../common/decorator';
 import { CreateOtpDto } from './dto/create-otp.dto';
+import { Serialize } from '../common/interceptor';
+import { MeDto } from './dto/me.dto';
 
 function createSendCookie(response: Response, data, deleteCookies = false) {
   const cookieOptions: CookieOptions = {
@@ -40,6 +43,14 @@ function createSendCookie(response: Response, data, deleteCookies = false) {
 @Controller('auth')
 export class AccountsController {
   constructor(private authService: AuthService) {}
+
+  @Get('/me')
+  @Serialize(MeDto)
+  getMyInfo(@Req() req: Request) {
+    const user = req.user;
+    return user;
+    // return this.authService.getMyInfo();
+  }
 
   @HttpCode(HttpStatus.OK)
   @Post('/otp')
