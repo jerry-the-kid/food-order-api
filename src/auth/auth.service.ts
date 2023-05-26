@@ -112,7 +112,7 @@ export class AuthService {
         },
         {
           secret: '2BnYpIgYb9woMAcUdeKVlggYTSDDj1',
-          expiresIn: '7d',
+          expiresIn: 60,
         },
       ),
     ]);
