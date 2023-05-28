@@ -8,8 +8,10 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.enableCors({
-    origin:
-      'http://localhost:4200, https://food-order-cozy-cobbler-a076f7.netlify.app/',
+    origin: [
+      'http://localhost:4200',
+      'https://food-order-cozy-cobbler-a076f7.netlify.app',
+    ],
     methods: '*',
     allowedHeaders: 'Content-Type, Accept',
     credentials: true,
