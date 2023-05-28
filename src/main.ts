@@ -8,7 +8,7 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.enableCors({
-    origin: 'http://localhost:4200',
+    origin: 'http://localhost:4200, https://cozy-cobbler-a076f7.netlify.app',
     methods: '*',
     allowedHeaders: 'Content-Type, Accept',
     credentials: true,
