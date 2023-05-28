@@ -270,8 +270,10 @@ export class RestaurantsService {
 
     // if (!filter) return calculatedRestaurants;
 
-    return calculatedRestaurants.filter(
-      (restaurant) => restaurant.distanceInKilometers < 10,
-    );
+    return calculatedRestaurants;
+
+    // return calculatedRestaurants.filter(
+    //   (restaurant) => restaurant.distanceInKilometers < 10,
+    // );
   }
 }
