@@ -17,4 +17,13 @@ export class SectionService {
   async findOne(id: number) {
     return this.repo.findOneBy({ id });
   }
+
+  getItemInSection(id: number) {
+    const item = this.repo.findOne({
+      where: { id },
+      relations: { items: true },
+    });
+
+    return item;
+  }
 }

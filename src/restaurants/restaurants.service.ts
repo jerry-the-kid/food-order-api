@@ -183,6 +183,15 @@ export class RestaurantsService {
     return { ...restaurant, durationInMinutes, distanceInKilometers };
   }
 
+  getSectionByRestaurant(id: number) {
+    const restaurant = this.repo.findOne({
+      where: { id: id },
+      relations: { sections: true },
+    });
+
+    return restaurant;
+  }
+
   async addCuisine(restaurantId: number, { id }: AddCuisineDto) {
     const cuisine = await this.cuisinesService.findOne(id);
     const restaurant = await this.repo.findOne({

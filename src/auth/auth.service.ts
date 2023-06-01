@@ -53,7 +53,10 @@ export class AuthService {
   }
 
   async singinLocal(dto: SignInDto) {
-    const user = await this.repo.findOneBy({ email: dto.email });
+    const user = await this.repo.findOne({
+      where: { email: dto.email },
+      relations: { restaurant: true },
+    });
 
     if (!user) throw new BadRequestException('Access Denied! User not found');
 

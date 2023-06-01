@@ -1,7 +1,15 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { Public } from '../common/decorator';
-import { CreateItemDto } from './dto';
+import { CreateItemDto, UpdateItemDto } from './dto';
 
 @Controller('items')
 export class ItemsController {
@@ -11,6 +19,18 @@ export class ItemsController {
   @Public()
   create(@Body() dto: CreateItemDto) {
     return this.itemsService.create(dto);
+  }
+
+  @Patch('/:id')
+  @Public()
+  update(@Param('id') id: string, dto: UpdateItemDto) {
+    return this.itemsService.update(+id, dto);
+  }
+
+  @Delete('/:id')
+  @Public()
+  delete(@Param('id') id: string) {
+    return this.itemsService.delete(+id);
   }
 
   @Patch('/:id/options/:optionId')

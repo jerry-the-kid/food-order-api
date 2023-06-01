@@ -67,8 +67,16 @@ export class AccountsController {
     @Res({ passthrough: true }) response: Response,
   ) {
     const data = await this.authService.singinLocal(body);
+
     createSendCookie(response, data);
-    return { id: data.user.id, email: data.user.email, role: data.user.role };
+    return data.user.restaurant
+      ? {
+          id: data.user.id,
+          email: data.user.email,
+          role: data.user.role,
+          restaurantId: data.user.restaurant['id'],
+        }
+      : { id: data.user.id, email: data.user.email, role: data.user.role };
   }
 
   @HttpCode(HttpStatus.OK)

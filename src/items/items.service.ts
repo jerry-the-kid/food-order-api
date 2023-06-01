@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateItemDto } from './dto';
+import { CreateItemDto, UpdateItemDto } from './dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Item } from './item.entity';
 import { Repository } from 'typeorm';
@@ -27,6 +27,23 @@ export class ItemsService {
     });
 
     return this.repo.save(item);
+  }
+
+  async update(id: number, dto: UpdateItemDto) {
+    const item = await this.repo.findOneBy({ id });
+    if (!item) {
+      throw new NotFoundException('Item not found');
+    }
+
+    return this.repo.save({ ...item, ...dto });
+  }
+
+  async delete(id: number) {
+    const item = await this.repo.findOneBy({ id });
+    if (!item) {
+      throw new NotFoundException('Item not found');
+    }
+    return this.repo.remove(item);
   }
 
   async addOption(id: number, optionId: number) {

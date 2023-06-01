@@ -130,6 +130,13 @@ export class RestaurantsController {
     return this.restaurantService.addCuisine(parseInt(id), dto);
   }
 
+  @Get('/:id/section')
+  @Public()
+  @Serialize(SectionsDto)
+  getSectionByRestaurant(@Param('id') id: string) {
+    return this.restaurantService.getSectionByRestaurant(+id);
+  }
+
   @Post('/:id/sections')
   @Public()
   @Serialize(SectionsDto)
